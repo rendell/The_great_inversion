@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Population Transformation Key Stats</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: white;
+            padding: 20px;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .stat-box {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 8px;
+            border-left: 5px solid #e67e22;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .stat-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-box .number {
+            font-size: 3em;
+            font-weight: 700;
+            color: #e67e22;
+            display: block;
+            margin-bottom: 15px;
+            line-height: 1;
+        }
+        
+        .stat-box .label {
+            font-size: 1.1em;
+            color: #555;
+            line-height: 1.4;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-box .number {
+                font-size: 2.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stats-container">
+        <div class="stat-box">
+            <span class="number">-33%</span>
+            <span class="label">Decline in children's share of population</span>
+        </div>
+        <div class="stat-box">
+            <span class="number">+177%</span>
+            <span class="label">Growth in elderly's share of population</span>
+        </div>
+        <div class="stat-box">
+            <span class="number">2025</span>
+            <span class="label">The year elderly nearly equal children</span>
+        </div>
+    </div>
+</body>
+</html>
