@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dependency Ratios Chart</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.0/plotly.min.js"></script>
+    <style>
+        body { margin: 0; padding: 20px; background: white; font-family: Arial, sans-serif; }
+        #chart { width: 100%; height: 650px; }
+    </style>
+</head>
+<body>
+    <div id="chart"></div>
+    <script>
+        var years = [1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025];
+        
+        var totalPop = [67382,70629,76781,78450,81160,84883,87720,89183,90135,91040,91833,92311,93546,96330,98939,99872,100428,101406,101801,101874,103307,104942,106438,107176,108635,108818,108651,109164,105281,107932,107468,107152,107566,108423,108348];
+        
+        var pctChildren = [22.7,24.3,23.6,23.5,23.5,22.7,23.0,22.9,22.6,23.1,22.7,22.5,22.3,21.8,21.0,21.2,20.9,20.6,20.2,20.7,20.3,19.9,19.6,19.3,18.9,18.7,18.3,17.7,17.1,17.3,16.2,15.9,15.7,15.5,15.5];
+        
+        var pctAdults = [55.0,55.6,56.6,56.7,56.8,55.0,57.3,57.2,57.5,57.0,57.2,57.6,57.6,57.7,57.7,57.6,57.5,57.5,56.4,55.6,55.8,55.1,55.4,55.3,56.1,56.0,55.8,55.8,55.6,55.4,55.9,55.0,54.7,54.6,54.5];
+        
+        var pctElderly = [6.9,6.8,6.6,6.7,6.8,6.9,7.0,7.2,7.5,7.4,7.7,8.0,8.3,8.5,8.7,9.0,9.3,9.6,9.9,10.4,10.8,11.2,11.6,12.0,12.5,12.9,13.5,14.1,14.7,16.1,16.7,17.5,18.4,19.0,19.1];
+
+        var popChildren = [];
+        var popAdults = [];
+        var popElderly = [];
+        var childDependency = [];
+        var elderlyDependency = [];
+        var totalDependency = [];
+
+        for (var i = 0; i < years.length; i++) {
+            popChildren[i] = Math.round(totalPop[i] * pctChildren[i] / 100);
+            popAdults[i] = Math.round(totalPop[i] * pctAdults[i] / 100);
+            popElderly[i] = Math.round(totalPop[i] * pctElderly[i] / 100);
+            
+            childDependency[i] = parseFloat(((popChildren[i] / popAdults[i]) * 100).toFixed(1));
+            elderlyDependency[i] = parseFloat(((popElderly[i] / popAdults[i]) * 100).toFixed(1));
+            totalDependency[i] = parseFloat((((popChildren[i] + popElderly[i]) / popAdults[i]) * 100).toFixed(1));
+        }
+
+        var trace1 = {
+            x: years,
+            y: childDependency,
+            name: 'Child Dependency',
+            type: 'scatter',
+            mode: 'lines',
+            line: { color: '#3498db', width: 3 },
+            hovertemplate: '<b>%{x}</b><br>Child dependency: %{y} per 100 workers<extra></extra>'
+        };
+
+        var trace2 = {
+            x: years,
+            y: elderlyDependency,
+            name: 'Elderly Dependency',
+            type: 'scatter',
+            mode: 'lines',
+            line: { color: '#c0392b', width: 3 },
+            hovertemplate: '<b>%{x}</b><br>Elderly dependency: %{y} per 100 workers<extra></extra>'
+        };
+
+        var trace3 = {
+            x: years,
+            y: totalDependency,
+            name: 'Total Dependency',
+            type: 'scatter',
+            mode: 'lines',
+            line: { color: '#2c3e50', width: 3, dash: 'dash' },
+            hovertemplate: '<b>%{x}</b><br>Total dependency: %{y} per 100 workers<extra></extra>'
+        };
+
+        var layout = {
+            title: 'Dependency ratios: How many dependents per 100 workers?',
+            xaxis: { title: 'Year', gridcolor: '#f0f0f0' },
+            yaxis: { title: 'Dependents per 100 Workers', gridcolor: '#f0f0f0' },
+            hovermode: 'x unified',
+            plot_bgcolor: 'white',
+            paper_bgcolor: 'white',
+            font: { family: 'Arial, sans-serif' },
+            legend: { orientation: 'h', y: -0.15 },
+            margin: { l: 60, r: 30, t: 60, b: 80 },
+            annotations: [{
+                x: 2008,
+                y: 25,
+                text: 'The crossing:<br>elderly dependency<br>overtakes children',
+                showarrow: true,
+                arrowhead: 2,
+                ax: -80,
+                ay: -60,
+                font: { size: 12, color: '#c0392b' },
+                bgcolor: 'rgba(255,255,255,0.8)',
+                borderpad: 4
+            }]
+        };
+
+        Plotly.newPlot('chart', [trace1, trace2, trace3], layout, {responsive: true});
+    </script>
+</body>
+</html>
