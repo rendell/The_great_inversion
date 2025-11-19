@@ -3,75 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aruba's Demographic Transformation: 2000-2025</title>
+    <title>Aruba's Great Inversion - GIF Version</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.0/plotly.min.js"></script>
     <style>
         body {
             margin: 0;
-            padding: 20px;
+            padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
         #chart-container {
-            width: 100%;
-            max-width: 900px;
-            margin: 0 auto;
+            width: 800px;
+            height: 600px;
         }
         #pyramid {
             width: 100%;
-            height: 600px;
-        }
-        .controls {
-            text-align: center;
-            margin-top: 15px;
-            padding: 10px;
-        }
-        .control-btn {
-            background-color: #2E86AB;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            margin: 0 5px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
-        }
-        .control-btn:hover {
-            background-color: #1a5f7a;
-        }
-        .control-btn:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-        .speed-control {
-            margin-top: 10px;
-        }
-        .speed-label {
-            margin: 0 10px;
-            font-size: 14px;
-            color: #333;
+            height: 100%;
         }
     </style>
 </head>
 <body>
     <div id="chart-container">
         <div id="pyramid"></div>
-        <div class="controls">
-            <button id="playBtn" class="control-btn">⏸ Pause</button>
-            <button id="resetBtn" class="control-btn">↺ Reset</button>
-            <div class="speed-control">
-                <span class="speed-label">Speed:</span>
-                <button id="slowBtn" class="control-btn">Slow</button>
-                <button id="normalBtn" class="control-btn">Normal</button>
-                <button id="fastBtn" class="control-btn">Fast</button>
-            </div>
-        </div>
     </div>
 
     <script>
-        // Version: Iteration 6 - Final with Real Data
-        // Wait for Plotly to load with timeout
+        // GIF Recording Version - Fast speed, 3 loops then stop
         function checkPlotlyAndInit() {
             if (typeof Plotly !== 'undefined') {
                 console.log('Plotly loaded successfully');
@@ -87,7 +48,6 @@
         });
 
         function initializeVisualization() {
-            // Real data from CBS Aruba (2000-2025)
             const years = [2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025];
             
             const ageGroups = ['0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', 
@@ -201,11 +161,12 @@
                 }
             };
 
-            // Animation settings
+            // Animation settings - FAST for GIF
             let currentYearIndex = 0;
-            let isPlaying = true;
-            let animationSpeed = 1500; // milliseconds between frames
+            let animationSpeed = 500; // Fast: 0.5 seconds per year
             let animationInterval;
+            let loopCount = 0;
+            const maxLoops = 3;
 
             // Color scheme
             const maleColor = '#2E86AB';
@@ -241,10 +202,11 @@
             function getLayout(year) {
                 return {
                     title: {
-                        text: `Aruba Population Structure: ${year}<br><sub>The Great Inversion in Motion</sub>`,
+                        text: `Aruba's Great Inversion: ${year}<br><sub>Population Transformation 2000-2025</sub>`,
                         font: {
-                            size: 20,
-                            color: '#333'
+                            size: 22,
+                            color: '#333',
+                            family: 'Segoe UI, sans-serif'
                         }
                     },
                     barmode: 'overlay',
@@ -252,30 +214,38 @@
                     xaxis: {
                         title: 'Population',
                         tickformat: ',d',
+                        range: [-5500, 5500],  // Fixed range for all years
                         tickmode: 'array',
                         tickvals: [-5000, -4000, -3000, -2000, -1000, 0, 1000, 2000, 3000, 4000, 5000],
                         ticktext: ['5,000', '4,000', '3,000', '2,000', '1,000', '0', '1,000', '2,000', '3,000', '4,000', '5,000'],
                         zeroline: true,
                         zerolinecolor: '#999',
-                        zerolinewidth: 2
+                        zerolinewidth: 2,
+                        fixedrange: true  // Prevents zooming/auto-scaling
                     },
                     yaxis: {
-                        title: 'Age Group'
+                        title: 'Age Group',
+                        titlefont: {
+                            size: 14
+                        }
                     },
                     showlegend: true,
                     legend: {
                         x: 0.1,
                         y: 0.95,
-                        bgcolor: 'rgba(255, 255, 255, 0.8)',
+                        bgcolor: 'rgba(255, 255, 255, 0.9)',
                         bordercolor: '#ccc',
-                        borderwidth: 1
+                        borderwidth: 1,
+                        font: {
+                            size: 12
+                        }
                     },
                     plot_bgcolor: 'white',
                     paper_bgcolor: 'white',
                     margin: {
                         l: 80,
                         r: 40,
-                        t: 100,
+                        t: 110,
                         b: 60
                     }
                 };
@@ -294,74 +264,32 @@
 
             function nextFrame() {
                 currentYearIndex = (currentYearIndex + 1) % years.length;
+                
+                // Check if we've completed a full loop
+                if (currentYearIndex === 0) {
+                    loopCount++;
+                    console.log(`Completed loop ${loopCount} of ${maxLoops}`);
+                    
+                    // Stop after 3 loops
+                    if (loopCount >= maxLoops) {
+                        clearInterval(animationInterval);
+                        console.log('Animation complete - 3 loops finished');
+                        return;
+                    }
+                }
+                
                 updateChart();
             }
 
             function startAnimation() {
-                if (animationInterval) {
-                    clearInterval(animationInterval);
-                }
                 animationInterval = setInterval(nextFrame, animationSpeed);
-                isPlaying = true;
-                document.getElementById('playBtn').innerHTML = '⏸ Pause';
             }
 
-            function stopAnimation() {
-                if (animationInterval) {
-                    clearInterval(animationInterval);
-                    animationInterval = null;
-                }
-                isPlaying = false;
-                document.getElementById('playBtn').innerHTML = '▶ Play';
-            }
-
-            function togglePlayPause() {
-                if (isPlaying) {
-                    stopAnimation();
-                } else {
-                    startAnimation();
-                }
-            }
-
-            function resetAnimation() {
-                currentYearIndex = 0;
-                updateChart();
-            }
-
-            function setSpeed(speed) {
-                const wasPlaying = isPlaying;
-                stopAnimation();
-                
-                switch(speed) {
-                    case 'slow':
-                        animationSpeed = 2500;
-                        break;
-                    case 'normal':
-                        animationSpeed = 1500;
-                        break;
-                    case 'fast':
-                        animationSpeed = 800;
-                        break;
-                }
-                
-                if (wasPlaying) {
-                    startAnimation();
-                }
-            }
-
-            // Event listeners
-            document.getElementById('playBtn').addEventListener('click', togglePlayPause);
-            document.getElementById('resetBtn').addEventListener('click', resetAnimation);
-            document.getElementById('slowBtn').addEventListener('click', () => setSpeed('slow'));
-            document.getElementById('normalBtn').addEventListener('click', () => setSpeed('normal'));
-            document.getElementById('fastBtn').addEventListener('click', () => setSpeed('fast'));
-
-            // Initialize
+            // Initialize and start
             updateChart();
-            startAnimation();
-
-            // Handle window resize
-            window.addEventListener('resize', updateChart);
+            
+            // Small delay before starting animation
+            setTimeout(startAnimation, 500);
         }
     </script>
 </body>
