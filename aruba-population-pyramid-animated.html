@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aruba's Demographic Transformation: 1991-2023</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.0/plotly.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: white;
+        }
+        #chart-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        #pyramid {
+            width: 100%;
+            height: 600px;
+        }
+        .controls {
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+        }
+        .control-btn {
+            background-color: #2E86AB;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+        .control-btn:hover {
+            background-color: #1a5f7a;
+        }
+        .control-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .speed-control {
+            margin-top: 10px;
+        }
+        .speed-label {
+            margin: 0 10px;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div id="chart-container">
+        <div id="pyramid"></div>
+        <div class="controls">
+            <button id="playBtn" class="control-btn">⏸ Pause</button>
+            <button id="resetBtn" class="control-btn">↺ Reset</button>
+            <div class="speed-control">
+                <span class="speed-label">Speed:</span>
+                <button id="slowBtn" class="control-btn">Slow</button>
+                <button id="normalBtn" class="control-btn">Normal</button>
+                <button id="fastBtn" class="control-btn">Fast</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Version: Iteration 5
+        // Wait for Plotly to load with timeout
+        function checkPlotlyAndInit() {
+            if (typeof Plotly !== 'undefined') {
+                console.log('Plotly loaded successfully');
+                initializeVisualization();
+            } else {
+                console.error('Plotly not loaded');
+                setTimeout(checkPlotlyAndInit, 100);
+            }
+        }
+        
+        window.addEventListener('load', function() {
+            setTimeout(checkPlotlyAndInit, 100);
+        });
+
+        function initializeVisualization() {
+        // Data structure: years and age groups with male/female populations
+        // Generate array of all years from 1991 to 2025
+        const years = [];
+        for (let year = 1991; year <= 2025; year++) {
+            years.push(year);
+        }
+        
+        const ageGroups = ['0-4', '5-9', '10-14', '15-19', '20-24', '25-29', '30-34', 
+                          '35-39', '40-44', '45-49', '50-54', '55-59', '60-64', 
+                          '65-69', '70-74', '75-79', '80+'];
+        
+        // Simulated data showing demographic transition
+        // REPLACE THIS with your actual yearly data from 1991-2025
+        // This creates interpolated data between the key years as a placeholder
+        function generateYearData(year) {
+            // This is placeholder logic - replace with your actual data lookup
+            const keyYears = [1991, 2000, 2010, 2020, 2023, 2025];
+            const keyData = {
+                1991: {
+                    male: [4500, 4300, 4100, 4000, 3900, 3700, 3500, 3300, 3100, 2800, 2400, 2000, 1600, 1200, 800, 500, 400],
+                    female: [4300, 4100, 3900, 3800, 3700, 3600, 3400, 3200, 3000, 2700, 2300, 1900, 1500, 1100, 750, 550, 500]
+                },
+                2000: {
+                    male: [4000, 4200, 4100, 4000, 3900, 3800, 3700, 3500, 3300, 3100, 2900, 2500, 2000, 1600, 1100, 700, 550],
+                    female: [3800, 4000, 3900, 3800, 3700, 3700, 3600, 3400, 3200, 3000, 2800, 2400, 1900, 1500, 1050, 800, 650]
+                },
+                2010: {
+                    male: [3800, 3900, 4000, 4100, 4000, 3900, 3900, 3800, 3600, 3400, 3200, 3000, 2600, 2100, 1600, 1000, 750],
+                    female: [3600, 3700, 3800, 3900, 3800, 3800, 3800, 3700, 3500, 3300, 3100, 2900, 2500, 2000, 1550, 1150, 900]
+                },
+                2020: {
+                    male: [3600, 3700, 3800, 3900, 3900, 4000, 4000, 4000, 3900, 3700, 3500, 3300, 3100, 2700, 2200, 1500, 1100],
+                    female: [3400, 3500, 3600, 3700, 3700, 3900, 3900, 3900, 3800, 3600, 3400, 3200, 3000, 2600, 2150, 1700, 1400]
+                },
+                2023: {
+                    male: [3500, 3600, 3700, 3800, 3900, 4000, 4000, 4100, 4000, 3800, 3600, 3400, 3200, 2900, 2400, 1700, 1300],
+                    female: [3300, 3400, 3500, 3600, 3700, 3900, 3900, 4000, 3900, 3700, 3500, 3300, 3100, 2800, 2350, 1900, 1650]
+                },
+                2025: {
+                    male: [3400, 3500, 3700, 3800, 3900, 4000, 4000, 4100, 4000, 3900, 3700, 3500, 3300, 3000, 2500, 1800, 1400],
+                    female: [3200, 3300, 3500, 3600, 3700, 3900, 3900, 4000, 3900, 3800, 3600, 3400, 3200, 2900, 2450, 2000, 1750]
+                }
+            };
+            
+            // Simple linear interpolation between key years
+            // Replace this entire function with direct data lookup from your actual dataset
+            if (keyData[year]) {
+                return keyData[year];
+            }
+            
+            // Find surrounding years for interpolation
+            let lowerYear = keyYears[0];
+            let upperYear = keyYears[keyYears.length - 1];
+            for (let i = 0; i < keyYears.length - 1; i++) {
+                if (year >= keyYears[i] && year <= keyYears[i + 1]) {
+                    lowerYear = keyYears[i];
+                    upperYear = keyYears[i + 1];
+                    break;
+                }
+            }
+            
+            const ratio = (year - lowerYear) / (upperYear - lowerYear);
+            const lowerData = keyData[lowerYear];
+            const upperData = keyData[upperYear];
+            
+            return {
+                male: lowerData.male.map((val, idx) => 
+                    Math.round(val + (upperData.male[idx] - val) * ratio)),
+                female: lowerData.female.map((val, idx) => 
+                    Math.round(val + (upperData.female[idx] - val) * ratio))
+            };
+        }
+        
+        const demographicData = {};
+        years.forEach(year => {
+            demographicData[year] = generateYearData(year);
+        });
+
+        // Animation settings
+        let currentYearIndex = 0;
+        let isPlaying = true;
+        let animationSpeed = 1500; // milliseconds between frames
+        let animationInterval;
+
+        // Color scheme
+        const maleColor = '#2E86AB';
+        const femaleColor = '#A23B72';
+
+        function createPyramidFrame(year) {
+            const data = demographicData[year];
+            
+            return [{
+                type: 'bar',
+                x: data.male.map(val => -val),
+                y: ageGroups,
+                orientation: 'h',
+                name: 'Male',
+                marker: {
+                    color: maleColor
+                },
+                hovertemplate: 'Age: %{y}<br>Male: %{customdata:,}<extra></extra>',
+                customdata: data.male
+            }, {
+                type: 'bar',
+                x: data.female,
+                y: ageGroups,
+                orientation: 'h',
+                name: 'Female',
+                marker: {
+                    color: femaleColor
+                },
+                hovertemplate: 'Age: %{y}<br>Female: %{x:,}<extra></extra>'
+            }];
+        }
+
+        function getLayout(year) {
+            return {
+                title: {
+                    text: `Aruba Population Structure: ${year}<br><sub>The Great Inversion in Motion</sub>`,
+                    font: {
+                        size: 20,
+                        color: '#333'
+                    }
+                },
+                barmode: 'overlay',
+                bargap: 0.1,
+                xaxis: {
+                    title: 'Population',
+                    tickformat: ',d',
+                    tickmode: 'array',
+                    tickvals: [-4500, -3000, -1500, 0, 1500, 3000, 4500],
+                    ticktext: ['4,500', '3,000', '1,500', '0', '1,500', '3,000', '4,500'],
+                    zeroline: true,
+                    zerolinecolor: '#999',
+                    zerolinewidth: 2
+                },
+                yaxis: {
+                    title: 'Age Group'
+                },
+                showlegend: true,
+                legend: {
+                    x: 0.1,
+                    y: 0.95,
+                    bgcolor: 'rgba(255, 255, 255, 0.8)',
+                    bordercolor: '#ccc',
+                    borderwidth: 1
+                },
+                plot_bgcolor: 'white',
+                paper_bgcolor: 'white',
+                margin: {
+                    l: 80,
+                    r: 40,
+                    t: 100,
+                    b: 60
+                }
+            };
+        }
+
+        function updateChart() {
+            const year = years[currentYearIndex];
+            const data = createPyramidFrame(year);
+            const layout = getLayout(year);
+            
+            Plotly.react('pyramid', data, layout, {
+                displayModeBar: false,
+                responsive: true
+            });
+        }
+
+        function nextFrame() {
+            currentYearIndex = (currentYearIndex + 1) % years.length;
+            updateChart();
+        }
+
+        function startAnimation() {
+            if (animationInterval) {
+                clearInterval(animationInterval);
+            }
+            animationInterval = setInterval(nextFrame, animationSpeed);
+            isPlaying = true;
+            document.getElementById('playBtn').innerHTML = '⏸ Pause';
+        }
+
+        function stopAnimation() {
+            if (animationInterval) {
+                clearInterval(animationInterval);
+                animationInterval = null;
+            }
+            isPlaying = false;
+            document.getElementById('playBtn').innerHTML = '▶ Play';
+        }
+
+        function togglePlayPause() {
+            if (isPlaying) {
+                stopAnimation();
+            } else {
+                startAnimation();
+            }
+        }
+
+        function resetAnimation() {
+            currentYearIndex = 0;
+            updateChart();
+        }
+
+        function setSpeed(speed) {
+            const wasPlaying = isPlaying;
+            stopAnimation();
+            
+            switch(speed) {
+                case 'slow':
+                    animationSpeed = 2500;
+                    break;
+                case 'normal':
+                    animationSpeed = 1500;
+                    break;
+                case 'fast':
+                    animationSpeed = 800;
+                    break;
+            }
+            
+            if (wasPlaying) {
+                startAnimation();
+            }
+        }
+
+        // Event listeners
+        document.getElementById('playBtn').addEventListener('click', togglePlayPause);
+        document.getElementById('resetBtn').addEventListener('click', resetAnimation);
+        document.getElementById('slowBtn').addEventListener('click', () => setSpeed('slow'));
+        document.getElementById('normalBtn').addEventListener('click', () => setSpeed('normal'));
+        document.getElementById('fastBtn').addEventListener('click', () => setSpeed('fast'));
+
+        // Initialize
+        updateChart();
+        startAnimation();
+
+        // Handle window resize
+        window.addEventListener('resize', updateChart);
+        } // End of initializeVisualization function
+    </script>
+</body>
+</html>
